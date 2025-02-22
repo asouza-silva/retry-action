@@ -1,0 +1,17 @@
+name: 'Retry Action'
+description: 'Retry a command until it succeeds or reaches the maximum number of attempts.'
+inputs:
+  command:
+    description: 'The command to run.'
+    required: true
+  max_attempts:
+    description: 'Maximum number of attempts.'
+    required: true
+    default: '3'
+  timeout_minutes:
+    description: 'Timeout in minutes for each attempt.'
+    required: true
+    default: '10'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
