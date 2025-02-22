@@ -13,22 +13,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-
-    #   - name: Install dependencies
-    #     run: npm install
-
-    #   - name: Build action
-    #     run: npm run build
 
       - name: Test Retry Action
         uses: ./
         with:
-          command: bash -c "echo 'Tentativa $((++count))'; if [ $count -lt 3 ]; then exit 1; else exit 0; fi"
+          command: |
+            count=$(cat count.txt 2>/dev/null || echo 0)
+            count=$((count + 1))
+            echo "Tentativa $count"
+            if [ $count -lt 3 ]; then
+              echo $count > count.txt
+              exit 1
+            else
+              exit 0
+            fi
           max_attempts: 3
           timeout_minutes: 1
+
+      - name: Clean up
+        run: rm -f count.txt
